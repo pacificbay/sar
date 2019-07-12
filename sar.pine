@@ -37,58 +37,53 @@ AF_maximum = input(0.2)
 
 
 // start with uptrend
-uptrend = true
-newtrend = false
-EP = high
-SAR = low
-AF = AF_initial
+var uptrend = true
+var newtrend = false
+var EP = high
+var SAR = low
+var AF = AF_initial
 
-if not na(uptrend[1]) and not na(newtrend[1])
-    if uptrend[1]
+if bar_index > 0
+    if uptrend
         EP := max(high, EP[1])
     else
         EP := min(low, EP[1])
-    if newtrend[1]
-        AF := AF_initial
-    else
-        if EP != EP[1]
-            AF := min(AF_maximum, AF[1] + AF_increment)
-        else
-            AF := AF[1]
+    
+    if EP != EP[1]
+        AF := min(AF_maximum, AF + AF_increment)
+    
     SAR := SAR[1] + AF * (EP - SAR[1])
-    if uptrend[1]
-        if newtrend
+    
+    if uptrend
+        if SAR > low
+            uptrend := false
+            newtrend := true
             SAR := max(high, EP[1])
             EP := min(low, low[1])
+            AF := AF_initial
         else
-            SAR := min(SAR, low[1])
-            if not na(low[2])
-                SAR := min(SAR, low[2])
-            if SAR > low
-                uptrend := false
-                newtrend := true
-                SAR := max(high, EP[1])
-                EP := min(low, low[1])
-            else
-                uptrend := true
-                newtrend := false
+            newtrend := false
     else
-        if newtrend
+        if SAR < high
+            uptrend := true
+            newtrend := true
             SAR := min(low, EP[1])
             EP := max(high, high[1])
+            AF := AF_initial
         else
-            SAR := max(SAR, high[1])
-            if not na(high[2])
-                SAR := max(SAR, high[2])
-            if SAR < high
-                uptrend := true
-                newtrend := true
-                SAR := min(low, EP[1])
-                EP := max(high, high[1])
-            else
-                uptrend := false
-                newtrend := false
+            newtrend := false
             
-        
+    if uptrend
+        SAR := min(SAR, low[1])
+        if not na(low[2])
+            SAR := min(SAR, low[2])
+    else
+        SAR := max(SAR, high[1])
+        if not na(high[2])
+            SAR := max(SAR, high[2])
 
+// Debug values
+// plot(EP, color = uptrend ? color.lime : color.orange, style = plot.style_circles, linewidth = 2)
+// plot(EP != EP[1] ? EP : na, color = uptrend ? color.green : color.red, style = plot.style_circles, linewidth = 5)
+// plot(AF, color= color.purple, style=plot.style_circles)
 plot(SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
