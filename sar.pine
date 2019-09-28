@@ -1,5 +1,5 @@
 //@version=4
-study("Lucid SAR version 1.0.0", shorttitle="Lucid SAR", overlay=true)
+study("SAR Testing A", shorttitle="SAR Testing A", overlay=true)
 
 // Branded under the name "Lucid SAR" 
 // As agreed to with Lucid Investment Strategies LLC on July 9, 2019
@@ -35,60 +35,62 @@ AF_initial = input(0.02)
 AF_increment = input(0.02)
 AF_maximum = input(0.2)
 
+LUCID_SAR(initial, increment, maximum) =>
 
-// start with uptrend
-uptrend = true
-newtrend = false
-EP = high
-SAR = low
-AF = AF_initial
+    // start with uptrend
+    uptrend = true
+    newtrend = false
+    EP = high
+    SAR = low
+    AF = AF_initial
 
-if not na(uptrend[1]) and not na(newtrend[1])
-    if uptrend[1]
-        EP := max(high, EP[1])
-    else
-        EP := min(low, EP[1])
-    if newtrend[1]
-        AF := AF_initial
-    else
-        if EP != EP[1]
-            AF := min(AF_maximum, AF[1] + AF_increment)
+    if not na(uptrend[1]) and not na(newtrend[1])
+        if uptrend[1]
+            EP := max(high, EP[1])
         else
-            AF := AF[1]
-    SAR := SAR[1] + AF * (EP - SAR[1])
-    if uptrend[1]
-        if newtrend
-            SAR := max(high, EP[1])
-            EP := min(low, low[1])
+            EP := min(low, EP[1])
+        if newtrend[1]
+            AF := AF_initial
         else
-            SAR := min(SAR, low[1])
-            if not na(low[2])
-                SAR := min(SAR, low[2])
-            if SAR > low
-                uptrend := false
-                newtrend := true
+            if EP != EP[1]
+                AF := min(AF_maximum, AF[1] + AF_increment)
+            else
+                AF := AF[1]
+        SAR := SAR[1] + AF * (EP - SAR[1])
+        if uptrend[1]
+            if newtrend
                 SAR := max(high, EP[1])
                 EP := min(low, low[1])
             else
-                uptrend := true
-                newtrend := false
-    else
-        if newtrend
-            SAR := min(low, EP[1])
-            EP := max(high, high[1])
+                SAR := min(SAR, low[1])
+                if not na(low[2])
+                    SAR := min(SAR, low[2])
+                if SAR > low
+                    uptrend := false
+                    newtrend := true
+                    SAR := max(high, EP[1])
+                    EP := min(low, low[1])
+                else
+                    uptrend := true
+                    newtrend := false
         else
-            SAR := max(SAR, high[1])
-            if not na(high[2])
-                SAR := max(SAR, high[2])
-            if SAR < high
-                uptrend := true
-                newtrend := true
+            if newtrend
                 SAR := min(low, EP[1])
                 EP := max(high, high[1])
             else
-                uptrend := false
-                newtrend := false
-            
-        
+                SAR := max(SAR, high[1])
+                if not na(high[2])
+                    SAR := max(SAR, high[2])
+                if SAR < high
+                    uptrend := true
+                    newtrend := true
+                    SAR := min(low, EP[1])
+                    EP := max(high, high[1])
+                else
+                    uptrend := false
+                    newtrend := false
+    SAR
+
+SAR = LUCID_SAR(AF_initial, AF_increment, AF_maximum)
 
 plot(SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
