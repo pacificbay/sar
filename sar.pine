@@ -30,6 +30,8 @@ study("SAR Testing B", shorttitle="SAR Testing B", overlay=true)
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// The following four global variables are used to provide events between the two indicators combined here,
+// so that one indicator when triggered triggers the other into a reversal, too
 TSR_reversal_triggered = false
 TSR_reversal_to_uptrend = boolean(na)
 SAR_reversal_triggered = false
@@ -51,14 +53,28 @@ LUCID_SAR(initial, increment, maximum) =>
 
     reversal_triggered = false
 
-    if not na(TSR_reversal_triggered) and TSR_reversal_triggered
-        if  TSR_reveral_to_uptrend
+    if not na(uptrend[1]) and not na(new_trend[1])
+
+
+        if barstate.isnew
+//            uptrend := uptrend[1]
+//            new_trend := new_trend[1]
+            if TSR_reversal_triggered[1] and not SAR_reversal_triggered[1]
+                if  TSR_reveral_to_uptrend[1]
+                    uptrend := true
+                    new_trend := true
+                    SAR := min(low, EP[1])
+                    EP := min(low, low[1])
+                    reversal_triggered := true
+
+                else
+                    uptrend := false
+                    new_trend := true
+                    SAR := max(high, EP[1])
+                    EP := min(low, low[1])
+                    reversal_triggered := true
 
         else
-
-
-    else
-        if not na(uptrend[1]) and not na(new_trend[1])
             if uptrend[1]
                 EP := max(high, EP[1])
             else
@@ -137,18 +153,30 @@ TSR() =>
     var since_extreme = 0
     var since_setup = 0
 
-    waiting_for_setup   := not extreme_candle and not na(SP)
-    waiting_for_trigger := not extreme_candle and not na(TP)
-
     reversal_triggered = false
 
-    if not na(SAR_reversal_triggered) and SAR_reversal_triggered
-        if  SAR_reveral_to_uptrend
+    if not barstate.isfirst
 
-        else
+        if barstate.isnew
+            if SAR_reversal_triggered[1] and not TSR_reversal_triggered[1]
+                if  SAR_reveral_to_uptrend[1]
+                    EP := low[1]
+                    SP := high[1]
+                    TP := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
+                    uptrend := true
+                else
+                    EP := high[1]
+                    SP := low[1]
+                    TP := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
+                    uptrend := false
 
-    else
-        if not barstate.isfirst
+            waiting_for_setup   := not extreme_candle and not na(SP)
+            waiting_for_trigger := not extreme_candle and not na(TP)
+
             if barstate.isnew and waiting_for_trigger
                 since_setup := since_setup + 1
                 trigger := TP
