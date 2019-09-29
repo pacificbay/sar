@@ -105,7 +105,7 @@ LUCID_SAR(initial, increment, maximum) =>
                     uptrend := false
                     new_trend := false
 
-    if barstate.isconfirmed
+    if not barstate.isfirst and barstate.isconfirmed
         if reversal_triggered
             SAR_reversal_triggered := true
             SAR_reversal_to_uptrend := uptrend
