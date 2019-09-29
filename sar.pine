@@ -205,3 +205,4 @@ plotshape(SC and not up, color = color.red, style = shape.triangledown, location
 plotshape(EC and not up, color = color.yellow, style = shape.triangledown, location = location.belowbar)
 
 plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 1)
+
