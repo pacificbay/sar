@@ -30,6 +30,11 @@ study("SAR Testing A", shorttitle="SAR Testing A", overlay=true)
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+TSR_reversal_triggered = false
+TSR_reversal_to_uptrend = boolean(na)
+SAR_reversal_triggered = false
+SAR_reversal_to_uptrend = boolean(na)
+
 
 AF_initial = input(0.02)
 AF_increment = input(0.02)
@@ -44,51 +49,69 @@ LUCID_SAR(initial, increment, maximum) =>
     SAR = low
     AF = AF_initial
 
-    if not na(uptrend[1]) and not na(new_trend[1])
-        if uptrend[1]
-            EP := max(high, EP[1])
+    reversal_triggered = false
+
+    if not na(TSR_reversal_triggered) and TSR_reversal_triggered
+        if  TSR_reveral_to_uptrend
+
         else
-            EP := min(low, EP[1])
-        if new_trend[1]
-            AF := AF_initial
-        else
-            if EP != EP[1]
-                AF := min(AF_maximum, AF[1] + AF_increment)
+
+
+    else
+        if not na(uptrend[1]) and not na(new_trend[1])
+            if uptrend[1]
+                EP := max(high, EP[1])
             else
-                AF := AF[1]
-        SAR := SAR[1] + AF * (EP - SAR[1])
-        if uptrend[1]
-            if new_trend
-                SAR := max(high, EP[1])
-                EP := min(low, low[1])
+                EP := min(low, EP[1])
+            if new_trend[1]
+                AF := AF_initial
             else
-                SAR := min(SAR, low[1])
-                if not na(low[2])
-                    SAR := min(SAR, low[2])
-                if SAR > low
-                    uptrend := false
-                    new_trend := true
+                if EP != EP[1]
+                    AF := min(AF_maximum, AF[1] + AF_increment)
+                else
+                    AF := AF[1]
+            SAR := SAR[1] + AF * (EP - SAR[1])
+            if uptrend[1]
+                if new_trend
                     SAR := max(high, EP[1])
                     EP := min(low, low[1])
                 else
-                    uptrend := true
-                    new_trend := false
-        else
-            if new_trend
-                SAR := min(low, EP[1])
-                EP := max(high, high[1])
+                    SAR := min(SAR, low[1])
+                    if not na(low[2])
+                        SAR := min(SAR, low[2])
+                    if SAR > low
+                        uptrend := false
+                        new_trend := true
+                        SAR := max(high, EP[1])
+                        EP := min(low, low[1])
+                        reversal_triggered := true
+                    else
+                        uptrend := true
+                        new_trend := false
             else
-                SAR := max(SAR, high[1])
-                if not na(high[2])
-                    SAR := max(SAR, high[2])
-                if SAR < high
-                    uptrend := true
-                    new_trend := true
+                if new_trend
                     SAR := min(low, EP[1])
                     EP := max(high, high[1])
                 else
-                    uptrend := false
-                    new_trend := false
+                    SAR := max(SAR, high[1])
+                    if not na(high[2])
+                        SAR := max(SAR, high[2])
+                    if SAR < high
+                        uptrend := true
+                        new_trend := true
+                        SAR := min(low, EP[1])
+                        EP := max(high, high[1])
+                        reversal_triggered := true
+                    else
+                        uptrend := false
+                        new_trend := false
+
+    if barstate.isconfirmed
+        if reversal_triggered
+            SAR_reversal_triggered := true
+            SAR_reversal_to_uptrend := uptrend
+
+
     SAR
 
 L_SAR = LUCID_SAR(AF_initial, AF_increment, AF_maximum)
@@ -117,71 +140,86 @@ TSR() =>
     waiting_for_setup   := not extreme_candle and not na(SP)
     waiting_for_trigger := not extreme_candle and not na(TP)
 
-    if not barstate.isfirst
-        if barstate.isnew and waiting_for_trigger
-            since_setup := since_setup + 1
-            trigger := TP
-        if barstate.isnew and waiting_for_setup
-            since_extreme := since_extreme + 1
-            setup := SP
-        if uptrend
+    reversal_triggered = false
 
-            if extreme_candle
-                EP := high
-                SP := low
-            else
-                if high > EP
-                    extreme_candle := true
-                    EP := high
-                    SP := low
-                    TP := float(na)
-                    since_extreme := 0
-                    since_setup   := 0
-                else
-                    if waiting_for_setup
-                        if barstate.isconfirmed
-                            if close < SP
-                                setup_candle := true
-                                SP := float(na)
-                                TP := low
-                    else
-                        if waiting_for_trigger
-                            if low < TP
-                                trigger_candle := true
-                                extreme_candle := true
-                                EP := low
-                                SP := high
-                                TP := float(na)
-                                uptrend := false
+    if not na(SAR_reversal_triggered) and SAR_reversal_triggered
+        if  SAR_reveral_to_uptrend
 
         else
-            if extreme_candle
-                EP := low
-                SP := high
+
+    else
+        if not barstate.isfirst
+            if barstate.isnew and waiting_for_trigger
+                since_setup := since_setup + 1
+                trigger := TP
+            if barstate.isnew and waiting_for_setup
+                since_extreme := since_extreme + 1
+                setup := SP
+            if uptrend
+
+                if extreme_candle
+                    EP := high
+                    SP := low
+                else
+                    if high > EP
+                        extreme_candle := true
+                        EP := high
+                        SP := low
+                        TP := float(na)
+                        since_extreme := 0
+                        since_setup   := 0
+                    else
+                        if waiting_for_setup
+                            if barstate.isconfirmed
+                                if close < SP
+                                    setup_candle := true
+                                    SP := float(na)
+                                    TP := low
+                        else
+                            if waiting_for_trigger
+                                if low < TP
+                                    trigger_candle := true
+                                    extreme_candle := true
+                                    EP := low
+                                    SP := high
+                                    TP := float(na)
+                                    uptrend := false
+                                    reversal_triggered := true
+
             else
-                if low <  EP
-                    extreme_candle := true
+                if extreme_candle
                     EP := low
                     SP := high
-                    TP := float(na)
-                    since_extreme := 0
-                    since_setup   := 0
                 else
-                    if waiting_for_setup
-                        if barstate.isconfirmed
-                            if close > SP
-                                setup_candle := true
-                                SP := float(na)
-                                TP := high
+                    if low <  EP
+                        extreme_candle := true
+                        EP := low
+                        SP := high
+                        TP := float(na)
+                        since_extreme := 0
+                        since_setup   := 0
                     else
-                        if waiting_for_trigger
-                            if high > TP
-                                trigger_candle := true
-                                extreme_candle := true
-                                EP := high
-                                SP := low
-                                TP := float(na)
-                                uptrend := true
+                        if waiting_for_setup
+                            if barstate.isconfirmed
+                                if close > SP
+                                    setup_candle := true
+                                    SP := float(na)
+                                    TP := high
+                        else
+                            if waiting_for_trigger
+                                if high > TP
+                                    trigger_candle := true
+                                    extreme_candle := true
+                                    EP := high
+                                    SP := low
+                                    TP := float(na)
+                                    uptrend := true
+                                    reversal_triggered := true
+
+    if barstate.isconfirmed
+        if reversal_triggered
+            TSR_reversal_triggered := true
+            TSR_reversal_to_uptrend := uptrend
 
     [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle, uptrend]
 
