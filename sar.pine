@@ -97,7 +97,6 @@ TSR() =>
 
     // start with uptrend
     var uptrend = true
-//    new_trend = false
     var EP = high       // extreme price - high or low depending on trend
     var SP = low        // setup price
     var TP = float(na)  // trigger price
@@ -165,6 +164,8 @@ TSR() =>
                     EP := low
                     SP := high
                     TP := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
                 else
                     if waiting_for_setup
                         if barstate.isconfirmed
@@ -182,13 +183,25 @@ TSR() =>
                                 TP := float(na)
                                 uptrend := true
 
-    [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle]
+    [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle, uptrend]
 
 
-[TC, T, SS, SC, S, SE, EC] = TSR()
+[TC, T, SS, SC, S, SE, EC, up] = TSR()
 
-plot(T, color = color.black, style = plot.style_cross, linewidth = 2)
+plot(T, color = color.navy, style = plot.style_cross, linewidth = 3)
 
-//plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
+plot(S, color = color.red, style = plot.style_cross, linewidth = 3)
 
-plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
+plotshape(TC and up, color = color.navy, style = shape.triangleup, location = location.belowbar)
+
+plotshape(SC and up, color = color.red, style = shape.triangleup, location = location.abovebar)
+
+plotshape(EC and up, color = color.yellow, style = shape.triangleup, location = location.abovebar)
+
+plotshape(TC and not up, color = color.navy, style = shape.triangledown, location = location.abovebar)
+
+plotshape(SC and not up, color = color.red, style = shape.triangledown, location = location.belowbar)
+
+plotshape(EC and not up, color = color.yellow, style = shape.triangledown, location = location.belowbar)
+
+plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 1)
