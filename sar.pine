@@ -190,8 +190,6 @@ TSR() =>
 
 plot(T, color = color.navy, style = plot.style_cross, linewidth = 3)
 
-plot(S, color = color.red, style = plot.style_cross, linewidth = 3)
-
 plotshape(TC and up, color = color.navy, style = shape.triangleup, location = location.belowbar)
 
 plotshape(SC and up, color = color.red, style = shape.triangleup, location = location.abovebar)
