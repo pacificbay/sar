@@ -1,5 +1,5 @@
 //@version=4
-study("SAR Testing A", shorttitle="SAR Testing A", overlay=true)
+study("SAR Testing B", shorttitle="SAR Testing B", overlay=true)
 
 // Branded under the name "Lucid SAR" 
 // As agreed to with Lucid Investment Strategies LLC on July 9, 2019
