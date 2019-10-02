@@ -1,9 +1,29 @@
 //@version=4
-study("SAR Testing A v0.0.6", shorttitle="SAR Testing A", overlay=true)
+study("SARs v1.1.0", shorttitle="SARs", overlay=true)
 
+// SAR #1
+// Lucid Sar
 // Branded under the name "Lucid SAR"
-// As agreed to with Lucid Investment Strategies LLC on July 9, 2019
+// as agreed to with Lucid Investment Strategies LLC on July 9, 2019
 // https://lucidinvestmentstrategies.com/
+// see branch "lucid"
+
+// SAR #2
+// Peterbolic Sar
+// Using the name "Peterbolic SAR"
+// as agreed to by Peter Brandt on October 2, 2019
+// - https://twitter.com/PeterLBrandt/status/1179365590668075008
+// in response to request from Sawcruhteez
+// - https://twitter.com/Sawcruhteez/status/1179213105705836544
+// Sawcruhteez gives credit to @CrazyGabey for coming up with the name
+// - https://twitter.com/Sawcruhteez/status/1179213196583940097
+// see branch "peterbolic"
+
+// SAR #3
+// Sawcruhteez Sar
+// Branded under the name "Sawcruhteez SAR"
+// as agreed to Sawcruhteez on September 11, 2019
+// see branch "sawcruhteez"
 
 
 // Created by Casey Bowman on July 4, 2019
@@ -207,5 +227,4 @@ plotshape(SC and up, color = color.yellow, style = shape.triangledown, location 
 
 plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Buy")
 
-
-
+plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
