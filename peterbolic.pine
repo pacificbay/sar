@@ -1,0 +1,168 @@
+//@version=4
+study("Peterbolic SAR v1.1.0", shorttitle="Peterbolic SAR", overlay=true)
+
+// SAR #1
+// Lucid Sar
+// Branded under the name "Lucid SAR"
+// as agreed to with Lucid Investment Strategies LLC on July 9, 2019
+// https://lucidinvestmentstrategies.com/
+// see branch "lucid"
+
+// SAR #2
+// Peterbolic Sar
+// Using the name "Peterbolic SAR"
+// as agreed to by Peter Brandt on October 2, 2019
+// - https://twitter.com/PeterLBrandt/status/1179365590668075008
+// in response to request from Sawcruhteez
+// - https://twitter.com/Sawcruhteez/status/1179213105705836544
+// Sawcruhteez gives credit to @CrazyGabey for coming up with the name
+// - https://twitter.com/Sawcruhteez/status/1179213196583940097
+// see branch "peterbolic"
+
+// SAR #3
+// Sawcruhteez Sar
+// Branded under the name "Sawcruhteez SAR"
+// as agreed to with Sawcruhteez on September 11, 2019
+// see branch "sawcruhteez"
+
+
+// Created by Casey Bowman on July 4, 2019
+
+// MIT License
+
+// Copyright (c) 2019 Casey Bowman
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+
+
+TSR() =>
+
+    // start with uptrend
+    var uptrend = true
+    var EP = high       // extreme price - high or low depending on trend
+    var SP = low        // setup price
+    var TP = float(na)  // trigger price
+
+
+    var setup   = low
+    var trigger = float(na)
+
+    if barstate.isnew
+        setup := low
+        trigger = float(na)
+
+    extreme_candle = false
+    setup_candle = false
+    trigger_candle = false
+
+    waiting_for_setup = false
+    waiting_for_trigger = false
+
+    var since_extreme = 0
+    var since_setup = 0
+
+    waiting_for_setup   := not extreme_candle and not na(SP)
+    waiting_for_trigger := not extreme_candle and not na(TP)
+
+    if not barstate.isfirst
+        if barstate.isnew and extreme_candle[1]
+            trigger := float(na)
+        if barstate.isnew and setup_candle[1]
+            setup := float(na)
+        if barstate.isnew and waiting_for_trigger
+            since_setup := since_setup + 1
+            trigger := TP
+        if barstate.isnew and waiting_for_setup
+            since_extreme := since_extreme + 1
+            setup := SP
+        if uptrend
+
+            if extreme_candle
+                EP := high
+                SP := low
+            else
+                if high > EP
+                    extreme_candle := true
+                    EP := high
+                    SP := low
+                    TP := float(na)
+                    trigger := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
+                else
+                    if waiting_for_setup
+                        if barstate.isconfirmed
+                            if close < SP
+                                setup_candle := true
+                                SP := float(na)
+                                TP := low
+                    else
+                        if waiting_for_trigger
+                            if low < TP
+                                trigger_candle := true
+                                extreme_candle := true
+                                EP := low
+                                SP := high
+                                TP := float(na)
+                                uptrend := false
+
+        else
+            if extreme_candle
+                EP := low
+                SP := high
+            else
+                if low <  EP
+                    extreme_candle := true
+                    EP := low
+                    SP := high
+                    TP := float(na)
+                    trigger := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
+                else
+                    if waiting_for_setup
+                        if barstate.isconfirmed
+                            if close > SP
+                                setup_candle := true
+                                SP := float(na)
+                                TP := high
+                    else
+                        if waiting_for_trigger
+                            if high > TP
+                                trigger_candle := true
+                                extreme_candle := true
+                                EP := high
+                                SP := low
+                                TP := float(na)
+                                uptrend := true
+
+    [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle, uptrend]
+
+
+[TC, T, SS, SC, S, SE, EC, up] = TSR()
+
+plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Sell")
+
+plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto, title = "Trigger to Sell")
+
+plotshape(SC and up, color = color.yellow, style = shape.triangledown, location = location.abovebar, size = size.auto, transp = 0, title = "Setup to Buy")
+
+plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Buy")
+
