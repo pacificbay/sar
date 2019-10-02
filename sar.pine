@@ -1,5 +1,5 @@
 //@version=4
-study("SAR Testing A v0.0.2", shorttitle="SAR Testing A v0.0.2", overlay=true)
+study("SAR Testing A v0.0.6", shorttitle="SAR Testing A", overlay=true)
 
 // Branded under the name "Lucid SAR"
 // As agreed to with Lucid Investment Strategies LLC on July 9, 2019
@@ -199,12 +199,13 @@ TSR() =>
 
 [TC, T, SS, SC, S, SE, EC, up] = TSR()
 
-plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto)
+plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Sell")
 
-plotshape(SC and up, color = color.yellow, style = shape.triangleup, location = location.abovebar, size = size.auto, transp = 0)
+plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto, title = "Trigger to Sell")
 
-plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto)
+plotshape(SC and up, color = color.yellow, style = shape.triangledown, location = location.abovebar, size = size.auto, transp = 0, title = "Setup to Buy")
 
-plotshape(SC and not up, color = color.yellow, style = shape.triangledown, location = location.belowbar, size = size.auto, transp = 0)
+plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Buy")
+
 
 
