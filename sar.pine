@@ -199,11 +199,11 @@ TSR() =>
 
 [TC, T, SS, SC, S, SE, EC, up] = TSR()
 
-plotshape(TC and up, color = color.green, style = shape.arrowup, location = location.belowbar, size = size.auto)
+plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto)
 
 plotshape(SC and up, color = color.yellow, style = shape.triangleup, location = location.abovebar, size = size.auto, transp = 0)
 
-plotshape(TC and not up, color = color.red, style = shape.arrowdown, location = location.abovebar, size = size.auto)
+plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto)
 
 plotshape(SC and not up, color = color.yellow, style = shape.triangledown, location = location.belowbar, size = size.auto, transp = 0)
 
