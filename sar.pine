@@ -184,75 +184,75 @@ TSR() =>
                         since_setup   := 0
                         uptrend := false
 
-            waiting_for_setup   := not extreme_candle and not na(SP)
-            waiting_for_trigger := not extreme_candle and not na(TP)
+        waiting_for_setup   := not extreme_candle and not na(SP)
+        waiting_for_trigger := not extreme_candle and not na(TP)
 
-            if barstate.isnew and waiting_for_trigger
-                since_setup := since_setup + 1
-                trigger := TP
-            if barstate.isnew and waiting_for_setup
-                since_extreme := since_extreme + 1
-                setup := SP
-            if uptrend
+        if barstate.isnew and waiting_for_trigger
+            since_setup := since_setup + 1
+            trigger := TP
+        if barstate.isnew and waiting_for_setup
+            since_extreme := since_extreme + 1
+            setup := SP
+        if uptrend
 
-                if extreme_candle
+            if extreme_candle
+                EP := high
+                SP := low
+            else
+                if high > EP
+                    extreme_candle := true
                     EP := high
                     SP := low
+                    TP := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
                 else
-                    if high > EP
-                        extreme_candle := true
-                        EP := high
-                        SP := low
-                        TP := float(na)
-                        since_extreme := 0
-                        since_setup   := 0
+                    if waiting_for_setup
+                        if barstate.isconfirmed
+                            if close < SP
+                                setup_candle := true
+                                SP := float(na)
+                                TP := low
                     else
-                        if waiting_for_setup
-                            if barstate.isconfirmed
-                                if close < SP
-                                    setup_candle := true
-                                    SP := float(na)
-                                    TP := low
-                        else
-                            if waiting_for_trigger
-                                if low < TP
-                                    trigger_candle := true
-                                    extreme_candle := true
-                                    EP := low
-                                    SP := high
-                                    TP := float(na)
-                                    uptrend := false
-                                    reversal_triggered := true
+                        if waiting_for_trigger
+                            if low < TP
+                                trigger_candle := true
+                                extreme_candle := true
+                                EP := low
+                                SP := high
+                                TP := float(na)
+                                uptrend := false
+                                reversal_triggered := true
 
+        else
+            if extreme_candle
+                EP := low
+                SP := high
             else
-                if extreme_candle
+                if low <  EP
+                    extreme_candle := true
                     EP := low
                     SP := high
+                    TP := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
                 else
-                    if low <  EP
-                        extreme_candle := true
-                        EP := low
-                        SP := high
-                        TP := float(na)
-                        since_extreme := 0
-                        since_setup   := 0
+                    if waiting_for_setup
+                        if barstate.isconfirmed
+                            if close > SP
+                                setup_candle := true
+                                SP := float(na)
+                                TP := high
                     else
-                        if waiting_for_setup
-                            if barstate.isconfirmed
-                                if close > SP
-                                    setup_candle := true
-                                    SP := float(na)
-                                    TP := high
-                        else
-                            if waiting_for_trigger
-                                if high > TP
-                                    trigger_candle := true
-                                    extreme_candle := true
-                                    EP := high
-                                    SP := low
-                                    TP := float(na)
-                                    uptrend := true
-                                    reversal_triggered := true
+                        if waiting_for_trigger
+                            if high > TP
+                                trigger_candle := true
+                                extreme_candle := true
+                                EP := high
+                                SP := low
+                                TP := float(na)
+                                uptrend := true
+                                reversal_triggered := true
 
     if barstate.isconfirmed
         if reversal_triggered
