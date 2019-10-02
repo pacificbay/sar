@@ -1,7 +1,7 @@
 //@version=4
-study("SAR Testing A", shorttitle="SAR Testing A", overlay=true)
+study("SAR Testing A v0.0.2", shorttitle="SAR Testing A v0.0.2", overlay=true)
 
-// Branded under the name "Lucid SAR" 
+// Branded under the name "Lucid SAR"
 // As agreed to with Lucid Investment Strategies LLC on July 9, 2019
 // https://lucidinvestmentstrategies.com/
 
@@ -101,8 +101,13 @@ TSR() =>
     var SP = low        // setup price
     var TP = float(na)  // trigger price
 
-    setup   = low
-    trigger = float(na)
+
+    var setup   = low
+    var trigger = float(na)
+
+    if barstate.isnew
+        setup := low
+        trigger = float(na)
 
     extreme_candle = false
     setup_candle = false
@@ -118,6 +123,10 @@ TSR() =>
     waiting_for_trigger := not extreme_candle and not na(TP)
 
     if not barstate.isfirst
+        if barstate.isnew and extreme_candle[1]
+            trigger := float(na)
+        if barstate.isnew and setup_candle[1]
+            setup := float(na)
         if barstate.isnew and waiting_for_trigger
             since_setup := since_setup + 1
             trigger := TP
@@ -135,6 +144,7 @@ TSR() =>
                     EP := high
                     SP := low
                     TP := float(na)
+                    trigger := float(na)
                     since_extreme := 0
                     since_setup   := 0
                 else
@@ -164,6 +174,7 @@ TSR() =>
                     EP := low
                     SP := high
                     TP := float(na)
+                    trigger := float(na)
                     since_extreme := 0
                     since_setup   := 0
                 else
@@ -188,19 +199,12 @@ TSR() =>
 
 [TC, T, SS, SC, S, SE, EC, up] = TSR()
 
-plot(T, color = color.navy, style = plot.style_cross, linewidth = 3)
+plotshape(TC and up, color = color.green, style = shape.arrowup, location = location.belowbar, size = size.auto)
 
-plotshape(TC and up, color = color.navy, style = shape.triangleup, location = location.belowbar)
+plotshape(SC and up, color = color.yellow, style = shape.triangleup, location = location.abovebar, size = size.auto, transp = 0)
 
-plotshape(SC and up, color = color.red, style = shape.triangleup, location = location.abovebar)
+plotshape(TC and not up, color = color.red, style = shape.arrowdown, location = location.abovebar, size = size.auto)
 
-plotshape(EC and up, color = color.yellow, style = shape.triangleup, location = location.abovebar)
+plotshape(SC and not up, color = color.yellow, style = shape.triangledown, location = location.belowbar, size = size.auto, transp = 0)
 
-plotshape(TC and not up, color = color.navy, style = shape.triangledown, location = location.abovebar)
-
-plotshape(SC and not up, color = color.red, style = shape.triangledown, location = location.belowbar)
-
-plotshape(EC and not up, color = color.yellow, style = shape.triangledown, location = location.belowbar)
-
-plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 1)
 
