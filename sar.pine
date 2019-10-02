@@ -1,7 +1,7 @@
 //@version=4
-study("Lucid SAR version 1.0.0", shorttitle="Lucid SAR", overlay=true)
+study("SAR Testing A v0.0.6", shorttitle="SAR Testing A", overlay=true)
 
-// Branded under the name "Lucid SAR" 
+// Branded under the name "Lucid SAR"
 // As agreed to with Lucid Investment Strategies LLC on July 9, 2019
 // https://lucidinvestmentstrategies.com/
 
@@ -35,60 +35,177 @@ AF_initial = input(0.02)
 AF_increment = input(0.02)
 AF_maximum = input(0.2)
 
+LUCID_SAR(initial, increment, maximum) =>
 
-// start with uptrend
-uptrend = true
-newtrend = false
-EP = high
-SAR = low
-AF = AF_initial
+    // start with uptrend
+    uptrend = true
+    new_trend = false
+    EP = high
+    SAR = low
+    AF = AF_initial
 
-if not na(uptrend[1]) and not na(newtrend[1])
-    if uptrend[1]
-        EP := max(high, EP[1])
-    else
-        EP := min(low, EP[1])
-    if newtrend[1]
-        AF := AF_initial
-    else
-        if EP != EP[1]
-            AF := min(AF_maximum, AF[1] + AF_increment)
+    if not na(uptrend[1]) and not na(new_trend[1])
+        if uptrend[1]
+            EP := max(high, EP[1])
         else
-            AF := AF[1]
-    SAR := SAR[1] + AF * (EP - SAR[1])
-    if uptrend[1]
-        if newtrend
-            SAR := max(high, EP[1])
-            EP := min(low, low[1])
+            EP := min(low, EP[1])
+        if new_trend[1]
+            AF := AF_initial
         else
-            SAR := min(SAR, low[1])
-            if not na(low[2])
-                SAR := min(SAR, low[2])
-            if SAR > low
-                uptrend := false
-                newtrend := true
+            if EP != EP[1]
+                AF := min(AF_maximum, AF[1] + AF_increment)
+            else
+                AF := AF[1]
+        SAR := SAR[1] + AF * (EP - SAR[1])
+        if uptrend[1]
+            if new_trend
                 SAR := max(high, EP[1])
                 EP := min(low, low[1])
             else
-                uptrend := true
-                newtrend := false
-    else
-        if newtrend
-            SAR := min(low, EP[1])
-            EP := max(high, high[1])
+                SAR := min(SAR, low[1])
+                if not na(low[2])
+                    SAR := min(SAR, low[2])
+                if SAR > low
+                    uptrend := false
+                    new_trend := true
+                    SAR := max(high, EP[1])
+                    EP := min(low, low[1])
+                else
+                    uptrend := true
+                    new_trend := false
         else
-            SAR := max(SAR, high[1])
-            if not na(high[2])
-                SAR := max(SAR, high[2])
-            if SAR < high
-                uptrend := true
-                newtrend := true
+            if new_trend
                 SAR := min(low, EP[1])
                 EP := max(high, high[1])
             else
-                uptrend := false
-                newtrend := false
-            
-        
+                SAR := max(SAR, high[1])
+                if not na(high[2])
+                    SAR := max(SAR, high[2])
+                if SAR < high
+                    uptrend := true
+                    new_trend := true
+                    SAR := min(low, EP[1])
+                    EP := max(high, high[1])
+                else
+                    uptrend := false
+                    new_trend := false
+    SAR
 
-plot(SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
+L_SAR = LUCID_SAR(AF_initial, AF_increment, AF_maximum)
+
+TSR() =>
+
+    // start with uptrend
+    var uptrend = true
+    var EP = high       // extreme price - high or low depending on trend
+    var SP = low        // setup price
+    var TP = float(na)  // trigger price
+
+
+    var setup   = low
+    var trigger = float(na)
+
+    if barstate.isnew
+        setup := low
+        trigger = float(na)
+
+    extreme_candle = false
+    setup_candle = false
+    trigger_candle = false
+
+    waiting_for_setup = false
+    waiting_for_trigger = false
+
+    var since_extreme = 0
+    var since_setup = 0
+
+    waiting_for_setup   := not extreme_candle and not na(SP)
+    waiting_for_trigger := not extreme_candle and not na(TP)
+
+    if not barstate.isfirst
+        if barstate.isnew and extreme_candle[1]
+            trigger := float(na)
+        if barstate.isnew and setup_candle[1]
+            setup := float(na)
+        if barstate.isnew and waiting_for_trigger
+            since_setup := since_setup + 1
+            trigger := TP
+        if barstate.isnew and waiting_for_setup
+            since_extreme := since_extreme + 1
+            setup := SP
+        if uptrend
+
+            if extreme_candle
+                EP := high
+                SP := low
+            else
+                if high > EP
+                    extreme_candle := true
+                    EP := high
+                    SP := low
+                    TP := float(na)
+                    trigger := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
+                else
+                    if waiting_for_setup
+                        if barstate.isconfirmed
+                            if close < SP
+                                setup_candle := true
+                                SP := float(na)
+                                TP := low
+                    else
+                        if waiting_for_trigger
+                            if low < TP
+                                trigger_candle := true
+                                extreme_candle := true
+                                EP := low
+                                SP := high
+                                TP := float(na)
+                                uptrend := false
+
+        else
+            if extreme_candle
+                EP := low
+                SP := high
+            else
+                if low <  EP
+                    extreme_candle := true
+                    EP := low
+                    SP := high
+                    TP := float(na)
+                    trigger := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
+                else
+                    if waiting_for_setup
+                        if barstate.isconfirmed
+                            if close > SP
+                                setup_candle := true
+                                SP := float(na)
+                                TP := high
+                    else
+                        if waiting_for_trigger
+                            if high > TP
+                                trigger_candle := true
+                                extreme_candle := true
+                                EP := high
+                                SP := low
+                                TP := float(na)
+                                uptrend := true
+
+    [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle, uptrend]
+
+
+[TC, T, SS, SC, S, SE, EC, up] = TSR()
+
+plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Sell")
+
+plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto, title = "Trigger to Sell")
+
+plotshape(SC and up, color = color.yellow, style = shape.triangledown, location = location.abovebar, size = size.auto, transp = 0, title = "Setup to Buy")
+
+plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Buy")
+
+
+
