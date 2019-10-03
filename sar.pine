@@ -1,5 +1,5 @@
 //@version=4
-study("SARs v1.1.0", shorttitle="SARs", overlay=true)
+study("SARs v1.1.1", shorttitle="SARs", overlay=true)
 
 // SAR #1
 // Lucid Sar
@@ -25,6 +25,8 @@ study("SARs v1.1.0", shorttitle="SARs", overlay=true)
 // as agreed to Sawcruhteez on September 11, 2019
 // see branch "sawcruhteez"
 
+// Open Source on github
+// https://github.com/casey-bowman/sar/blob/peterbolic/peterbolic.pine
 
 // Created by Casey Bowman on July 4, 2019
 
