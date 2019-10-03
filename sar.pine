@@ -1,5 +1,5 @@
 //@version=4
-study("SARs v1.1.1", shorttitle="SARs", overlay=true)
+study("SARs v1.1.2", shorttitle="SARs", overlay=true)
 
 // SAR #1
 // Lucid Sar
@@ -221,12 +221,12 @@ TSR() =>
 
 [TC, T, SS, SC, S, SE, EC, up] = TSR()
 
-plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Sell")
+plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Buy")
 
-plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto, title = "Trigger to Sell")
+plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto, title = "Trigger to Buy")
 
-plotshape(SC and up, color = color.yellow, style = shape.triangledown, location = location.abovebar, size = size.auto, transp = 0, title = "Setup to Buy")
+plotshape(SC and up, color = color.yellow, style = shape.triangledown, location = location.abovebar, size = size.auto, transp = 0, title = "Setup to Sell")
 
-plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Buy")
+plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Sell")
 
 plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
