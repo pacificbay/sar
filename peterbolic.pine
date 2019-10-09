@@ -1,5 +1,5 @@
 //@version=4
-study("Peterbolic SAR v1.1.2", shorttitle="Peterbolic SAR", overlay=true)
+study("Peterbolic SAR v1.1.3", shorttitle="Peterbolic SAR", overlay=true)
 
 // SAR #1
 // Lucid Sar
@@ -71,6 +71,7 @@ TSR() =>
         trigger = float(na)
 
     extreme_candle = false
+    first_extreme_candle = false
     setup_candle = false
     trigger_candle = false
 
@@ -81,7 +82,7 @@ TSR() =>
     var since_setup = 0
 
     waiting_for_setup   := not extreme_candle and not na(SP)
-    waiting_for_trigger := not extreme_candle and not na(TP)
+    waiting_for_trigger := not na(TP)
 
     if not barstate.isfirst
         if barstate.isnew and extreme_candle[1]
@@ -104,8 +105,6 @@ TSR() =>
                     extreme_candle := true
                     EP := high
                     SP := low
-                    TP := float(na)
-                    trigger := float(na)
                     since_extreme := 0
                     since_setup   := 0
                 else
@@ -115,15 +114,20 @@ TSR() =>
                                 setup_candle := true
                                 SP := float(na)
                                 TP := low
-                    else
-                        if waiting_for_trigger
-                            if low < TP
-                                trigger_candle := true
-                                extreme_candle := true
-                                EP := low
-                                SP := high
-                                TP := float(na)
-                                uptrend := false
+            if waiting_for_trigger
+                if low < TP
+                    trigger_candle := true
+                    extreme_candle := true
+                    EP := low
+                    SP := high
+                    TP := float(na)
+                    uptrend := false
+                    since_extreme := 0
+                    since_setup := 0
+                else
+                    if barstate.isconfirmed and extreme_candle
+                        TP := float(na)
+                        trigger := float(na)
 
         else
             if extreme_candle
@@ -134,8 +138,6 @@ TSR() =>
                     extreme_candle := true
                     EP := low
                     SP := high
-                    TP := float(na)
-                    trigger := float(na)
                     since_extreme := 0
                     since_setup   := 0
                 else
@@ -145,15 +147,21 @@ TSR() =>
                                 setup_candle := true
                                 SP := float(na)
                                 TP := high
-                    else
-                        if waiting_for_trigger
-                            if high > TP
-                                trigger_candle := true
-                                extreme_candle := true
-                                EP := high
-                                SP := low
-                                TP := float(na)
-                                uptrend := true
+            if waiting_for_trigger
+                if high > TP
+                    trigger_candle := true
+                    extreme_candle := true
+                    EP := high
+                    SP := low
+                    TP := float(na)
+                    uptrend := true
+                    since_extreme := 0
+                    since_setup := 0
+                else
+                    if barstate.isconfirmed and extreme_candle
+                        TP := float(na)
+                        trigger := float(na)
+
 
     [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle, uptrend]
 
