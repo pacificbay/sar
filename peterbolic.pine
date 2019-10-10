@@ -1,5 +1,5 @@
 //@version=4
-study("Peterbolic SAR v1.1.3", shorttitle="Peterbolic SAR", overlay=true)
+study("Peterbolic SAR v1.1.4", shorttitle="Peterbolic SAR", overlay=true)
 
 // SAR #1
 // Lucid Sar
