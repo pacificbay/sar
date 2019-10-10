@@ -1,5 +1,5 @@
 //@version=4
-study("SARs v1.1.2", shorttitle="SARs", overlay=true)
+study("Peterbolic SAR v1.1.3", shorttitle="Peterbolic SAR", overlay=true)
 
 // SAR #1
 // Lucid Sar
@@ -22,7 +22,7 @@ study("SARs v1.1.2", shorttitle="SARs", overlay=true)
 // SAR #3
 // Sawcruhteez Sar
 // Branded under the name "Sawcruhteez SAR"
-// as agreed to Sawcruhteez on September 11, 2019
+// as agreed to with Sawcruhteez on September 11, 2019
 // see branch "sawcruhteez"
 
 // Open Source on github
@@ -53,13 +53,6 @@ study("SARs v1.1.2", shorttitle="SARs", overlay=true)
 // SOFTWARE.
 
 
-AF_initial = input(0.02)
-AF_increment = input(0.02)
-AF_maximum = input(0.2)
-
-import LUCID_SAR
-
-L_SAR = LUCID_SAR(AF_initial, AF_increment, AF_maximum)
 
 import TSR
 
@@ -73,4 +66,3 @@ plotshape(SC and up, color = color.yellow, style = shape.triangledown, location 
 
 plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Sell")
 
-plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)

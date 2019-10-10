@@ -1,0 +1,104 @@
+// version=1.1.0
+
+TSR() =>
+
+    // start with uptrend
+    var uptrend = true
+    var EP = high       // extreme price - high or low depending on trend
+    var SP = low        // setup price
+    var TP = float(na)  // trigger price
+
+
+    var setup   = low
+    var trigger = float(na)
+
+    if barstate.isnew
+        setup := low
+        trigger = float(na)
+
+    extreme_candle = false
+    setup_candle = false
+    trigger_candle = false
+
+    waiting_for_setup = false
+    waiting_for_trigger = false
+
+    var since_extreme = 0
+    var since_setup = 0
+
+    waiting_for_setup   := not extreme_candle and not na(SP)
+    waiting_for_trigger := not extreme_candle and not na(TP)
+
+    if not barstate.isfirst
+        if barstate.isnew and extreme_candle[1]
+            trigger := float(na)
+        if barstate.isnew and setup_candle[1]
+            setup := float(na)
+        if barstate.isnew and waiting_for_trigger
+            since_setup := since_setup + 1
+            trigger := TP
+        if barstate.isnew and waiting_for_setup
+            since_extreme := since_extreme + 1
+            setup := SP
+        if uptrend
+
+            if extreme_candle
+                EP := high
+                SP := low
+            else
+                if high > EP
+                    extreme_candle := true
+                    EP := high
+                    SP := low
+                    TP := float(na)
+                    trigger := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
+                else
+                    if waiting_for_setup
+                        if barstate.isconfirmed
+                            if close < SP
+                                setup_candle := true
+                                SP := float(na)
+                                TP := low
+                    else
+                        if waiting_for_trigger
+                            if low < TP
+                                trigger_candle := true
+                                extreme_candle := true
+                                EP := low
+                                SP := high
+                                TP := float(na)
+                                uptrend := false
+
+        else
+            if extreme_candle
+                EP := low
+                SP := high
+            else
+                if low <  EP
+                    extreme_candle := true
+                    EP := low
+                    SP := high
+                    TP := float(na)
+                    trigger := float(na)
+                    since_extreme := 0
+                    since_setup   := 0
+                else
+                    if waiting_for_setup
+                        if barstate.isconfirmed
+                            if close > SP
+                                setup_candle := true
+                                SP := float(na)
+                                TP := high
+                    else
+                        if waiting_for_trigger
+                            if high > TP
+                                trigger_candle := true
+                                extreme_candle := true
+                                EP := high
+                                SP := low
+                                TP := float(na)
+                                uptrend := true
+
+    [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle, uptrend]
