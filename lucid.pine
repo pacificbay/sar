@@ -1,5 +1,5 @@
 //@version=4
-study("Peterbolic SAR v1.1.5", shorttitle="Peterbolic SAR", overlay=true)
+study("Lucid SAR v1.1.5", shorttitle="Lucid SAR", overlay=true)
 
 // SAR #1
 // Lucid Sar
@@ -20,7 +20,7 @@ study("Peterbolic SAR v1.1.5", shorttitle="Peterbolic SAR", overlay=true)
 // SAR #3
 // Sawcruhteez Sar
 // Branded under the name "Sawcruhteez SAR"
-// as agreed to with Sawcruhteez on September 11, 2019
+// as agreed to Sawcruhteez on September 11, 2019
 
 // Open Source on github
 // https://github.com/casey-bowman/sar
@@ -51,16 +51,10 @@ study("Peterbolic SAR v1.1.5", shorttitle="Peterbolic SAR", overlay=true)
 
 
 
-import TSR
+AF_initial = input(0.02)
+AF_increment = input(0.02)
+AF_maximum = input(0.2)
 
+L_SAR = LUCID_SAR(AF_initial, AF_increment, AF_maximum)
 
-[TC, T, SS, SC, S, SE, EC, up] = TSR()
-
-plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Buy")
-
-plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto, title = "Trigger to Buy")
-
-plotshape(SC and up, color = color.yellow, style = shape.triangledown, location = location.abovebar, size = size.auto, transp = 0, title = "Setup to Sell")
-
-plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Sell")
-
+plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)

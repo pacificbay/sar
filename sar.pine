@@ -1,12 +1,11 @@
 //@version=4
-study("SARs v1.1.4", shorttitle="SARs", overlay=true)
+study("SARs v1.1.5", shorttitle="SARs", overlay=true)
 
 // SAR #1
 // Lucid Sar
 // Branded under the name "Lucid SAR"
 // as agreed to with Lucid Investment Strategies LLC on July 9, 2019
 // https://lucidinvestmentstrategies.com/
-// see branch "lucid"
 
 // SAR #2
 // Peterbolic Sar
@@ -17,13 +16,11 @@ study("SARs v1.1.4", shorttitle="SARs", overlay=true)
 // - https://twitter.com/Sawcruhteez/status/1179213105705836544
 // Sawcruhteez gives credit to @CrazyGabey for coming up with the name
 // - https://twitter.com/Sawcruhteez/status/1179213196583940097
-// see branch "peterbolic"
 
 // SAR #3
 // Sawcruhteez Sar
 // Branded under the name "Sawcruhteez SAR"
 // as agreed to Sawcruhteez on September 11, 2019
-// see branch "sawcruhteez"
 
 // Open Source on github
 // https://github.com/casey-bowman/sar
