@@ -1,6 +1,6 @@
 use pinescript_import;
+use std::io;
 
-#[allow(unused_must_use)]
-fn main() {
-    pinescript_import::run();
+fn main() -> Result<(), io::Error> {
+   pinescript_import::run()
 }
