@@ -26,7 +26,7 @@ study("Peterbolic SAR v1.1.4", shorttitle="Peterbolic SAR", overlay=true)
 // see branch "sawcruhteez"
 
 // Open Source on github
-// https://github.com/casey-bowman/sar/blob/peterbolic/peterbolic.pine
+// https://github.com/casey-bowman/sar
 
 // Created by Casey Bowman on July 4, 2019
 
@@ -55,6 +55,7 @@ study("Peterbolic SAR v1.1.4", shorttitle="Peterbolic SAR", overlay=true)
 
 
 import TSR
+
 
 [TC, T, SS, SC, S, SE, EC, up] = TSR()
 
