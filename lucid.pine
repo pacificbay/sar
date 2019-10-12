@@ -1,5 +1,5 @@
 //@version=4
-study("Lucid SAR v1.1.5", shorttitle="Lucid SAR", overlay=true)
+study("Lucid SAR v1.1.6", shorttitle="Lucid SAR", overlay=true)
 
 import header
 

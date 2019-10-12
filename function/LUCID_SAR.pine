@@ -7,49 +7,71 @@ LUCID_SAR(initial, increment, maximum) =>
     SAR = low
     AF = AF_initial
 
+    // before a reversal, the reversal_state is 0;
+    // after a reversal, within the same candle as the reversal,
+    // the reversal_state can be 1 (uptrend) or 2 (downtrend)
+    reversal_state = 0
+
+
     if not na(uptrend[1]) and not na(new_trend[1])
-        if uptrend[1]
-            EP := max(high, EP[1])
-        else
-            EP := min(low, EP[1])
-        if new_trend[1]
-            AF := AF_initial
-        else
-            if EP != EP[1]
-                AF := min(AF_maximum, AF[1] + AF_increment)
+        if reversal_state == 0
+            if uptrend[1]
+                EP := max(high, EP[1])
             else
-                AF := AF[1]
-        SAR := SAR[1] + AF * (EP - SAR[1])
-        if uptrend[1]
-            if new_trend
-                SAR := max(high, EP[1])
-                EP := min(low, low[1])
+                EP := min(low, EP[1])
+            if new_trend[1]
+                AF := AF_initial
             else
-                SAR := min(SAR, low[1])
-                if not na(low[2])
-                    SAR := min(SAR, low[2])
-                if SAR > low
-                    uptrend := false
-                    new_trend := true
+                if EP != EP[1]
+                    AF := min(AF_maximum, AF[1] + AF_increment)
+                else
+                    AF := AF[1]
+            SAR := SAR[1] + AF * (EP - SAR[1])
+            if uptrend[1]
+                if new_trend
                     SAR := max(high, EP[1])
                     EP := min(low, low[1])
                 else
-                    uptrend := true
-                    new_trend := false
-        else
-            if new_trend
-                SAR := min(low, EP[1])
-                EP := max(high, high[1])
+                    SAR := min(SAR, low[1])
+                    if not na(low[2])
+                        SAR := min(SAR, low[2])
+                    if SAR > low
+                        uptrend := false
+                        new_trend := true
+                        SAR := max(high, EP[1])
+                        EP := min(low, low[1])
+                        reversal_state := 2
+                    else
+                        uptrend := true
+                        new_trend := false
             else
-                SAR := max(SAR, high[1])
-                if not na(high[2])
-                    SAR := max(SAR, high[2])
-                if SAR < high
-                    uptrend := true
-                    new_trend := true
+                if new_trend
                     SAR := min(low, EP[1])
                     EP := max(high, high[1])
                 else
-                    uptrend := false
-                    new_trend := false
+                    SAR := max(SAR, high[1])
+                    if not na(high[2])
+                        SAR := max(SAR, high[2])
+                    if SAR < high
+                        uptrend := true
+                        new_trend := true
+                        SAR := min(low, EP[1])
+                        EP := max(high, high[1])
+                        reversal_state := 1
+                    else
+                        uptrend := false
+                        new_trend := false
+        else
+            if reversal_state == 1
+                EP := high
+                if low < SAR
+                    SAR := EP
+                    EP := low
+                    reversal_state == 2
+            else
+                EP := low
+                if high > SAR
+                    SAR := EP
+                    EP := high
+                    reversal_state == 1
     SAR
