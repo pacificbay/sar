@@ -67,4 +67,4 @@ LUCID_SAR(initial, increment, maximum) =>
                     EP := high
                     reversal_state == 1
                     uptrend := true
-    SAR
+    [SAR, reversal_state, uptrend]

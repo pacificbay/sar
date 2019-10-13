@@ -1,0 +1,59 @@
+//@version=4
+study("SARs v1.1.9", shorttitle="SARs", overlay=true)
+
+import header
+
+
+// The following global variable provide event signalling, after a fashion,
+// from the results of the LUCID_SAR and TSR functions to the SAWCRUHTEEZ indicator function
+TSR_reversal_triggered = false
+TSR_setup_towards_uptrend = false
+TSR_setup_towards_downtrend = false
+TSR_reversal_to_uptrend = false
+TSR_reversal_to_downtrend = false
+
+SAR_reversal_triggered = false
+SAR_reversal_to_uptrend = false
+SAR_reversal_to_downtrend = false
+SAR_in_uptrend = false
+SAR_in_downtrend = false
+
+
+AF_initial = input(0.02)
+AF_increment = input(0.02)
+AF_maximum = input(0.2)
+
+import LUCID_SAR
+
+// [SAR, trigger,
+
+[L_SAR, reversal, uptrend] =  LUCID_SAR(AF_initial, AF_increment, AF_maximum)
+
+SAR_reversal_triggered = (reversal != 0)
+SAR_reversal_to_uptrend = (reversal == 1)
+SAR_reversal_to_downtrend = (reversal == 2)
+SAR_in_uptrend = uptrend
+SAR_in_downtrend = not uptrend
+
+import TSR
+
+// [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle, uptrend]
+
+[TC, T, SS, SC, S, SE, EC, up] = TSR()
+
+TSR_reversal_triggered = TC
+TSR_setup_towards_uptrend = SC and (not up)
+TSR_setup_towards_downtrend = SC and up
+TSR_reversal_to_uptrend = TC and up
+TSR_reversal_to_downtrend = TC and (not up)
+
+import SAWCRUHTEEZ
+
+S_SAR[label] = SAWCRUHTEEZ(SAR_reversal_triggered, SAR_reversal_to_uptrend, SAR_reversal_to_downtrend, SAR_in_uptrend, SAR_in_downtrend,
+                    TSR_reversal_triggered, TSR_setup_towards_uptrend, TSR_setup_towards_downtrend, TSR_reversal_to_uptrend, TSR_reversal_to_downtrend)
+
+
+
+plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Sell")
+
+

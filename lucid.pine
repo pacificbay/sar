@@ -10,6 +10,6 @@ AF_maximum = input(0.2)
 
 import LUCID_SAR
 
-L_SAR = LUCID_SAR(AF_initial, AF_increment, AF_maximum)
+[L_SAR, reversal, uptrend] = LUCID_SAR(AF_initial, AF_increment, AF_maximum)
 
 plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
