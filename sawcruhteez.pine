@@ -52,8 +52,17 @@ import SAWCRUHTEEZ
 S_SAR[label] = SAWCRUHTEEZ(SAR_reversal_triggered, SAR_reversal_to_uptrend, SAR_reversal_to_downtrend, SAR_in_uptrend, SAR_in_downtrend,
                     TSR_reversal_triggered, TSR_setup_towards_uptrend, TSR_setup_towards_downtrend, TSR_reversal_to_uptrend, TSR_reversal_to_downtrend)
 
+plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Buy")
 
+plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto, title = "Trigger to Buy")
+
+plotshape(SC and up, color = color.yellow, style = shape.triangledown, location = location.abovebar, size = size.auto, transp = 0, title = "Setup to Sell")
 
 plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Sell")
+
+plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
+
+
+
 
 
