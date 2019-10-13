@@ -1,5 +1,5 @@
 //@version=4
-study("Sawcruhteez SAR v1.2.1", shorttitle="Sawcruhteez SAR", overlay=true)
+study("Sawcruhteez SAR v1.2.2", shorttitle="Sawcruhteez SAR", overlay=true)
 
 import header
 
