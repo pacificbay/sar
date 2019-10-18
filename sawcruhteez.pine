@@ -1,5 +1,5 @@
 //@version=4
-study("Sawcruhteez SAR v1.2.2", shorttitle="Sawcruhteez SAR", overlay=true)
+study("Sawcruhteez SAR v1.2.3", shorttitle="Sawcruhteez SAR", overlay=true)
 
 import header
 
@@ -47,7 +47,9 @@ TSR_reversal_to_downtrend := TC and (not up)
 
 import SAWCRUHTEEZ
 
-[signall, bullishh, profit_take_, stop_and_reverse_, stop_, long_, short_, buy_signal_, sell_signal_]= SAWCRUHTEEZ(SAR_reversal_triggered, SAR_reversal_to_uptrend, SAR_reversal_to_downtrend, SAR_in_uptrend, SAR_in_downtrend,
+
+
+[signall, profit_take_buy_, profit_take_sell_, stop_and_reverse_buy_, stop_and_reverse_sell_, stop_buy_, stop_sell_, long_, short_, buy_signal_, sell_signal_]= SAWCRUHTEEZ(SAR_reversal_triggered, SAR_reversal_to_uptrend, SAR_reversal_to_downtrend, SAR_in_uptrend, SAR_in_downtrend,
                      TSR_reversal_triggered, TSR_setup_towards_uptrend, TSR_setup_towards_downtrend, TSR_reversal_to_uptrend, TSR_reversal_to_downtrend)
 
 plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Buy")
@@ -61,68 +63,91 @@ plotshape(TC and not up, color = color.red, style = shape.triangledown, location
 plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
 
 
+plotshape(profit_take_buy_, color = color.green, style = shape.labelup, location=location.belowbar, size=size.auto, text = "Buy (FPT)", textcolor= color.black)
 
-plotshape(profit_take_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Profit take", textcolor=color.black)
+plotshape(profit_take_sell_, color = color.red, style = shape.labeldown, location= location.abovebar, size=size.auto, text = "Sell (FPT)", textcolor = color.black)
 
-plotshape(profit_take_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Profit take", textcolor=color.black)
+plotshape(stop_and_reverse_buy_, color = color.purple, style = shape.labeldown, location=location.abovebar, size = size.auto, text = "SAR", textcolor = color.black)
 
-plotshape(profit_take_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Profit take", textcolor=color.black)
-
-plotshape(profit_take_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Profit take", textcolor=color.black)
-
-
-plotshape(stop_and_reverse_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Stop and Reverse", textcolor=color.black)
-
-plotshape(stop_and_reverse_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Stop and Reverse", textcolor=color.black)
-
-plotshape(stop_and_reverse_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Stop and Reverse", textcolor=color.black)
-
-plotshape(stop_and_reverse_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Stop and Reverse", textcolor=color.black)
+plotshape(stop_and_reverse_sell_, color = color.purple, style = shape.labelup, location= location.belowbar, size=size.auto, text = "SAR", textcolor = color.black)
 
 
-plotshape(stop_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Stop", textcolor=color.black)
+plotshape(stop_buy_, color = color.blue, style = shape.labeldown, location=location.abovebar, size = size.auto, text = "Stop", textcolor = color.black)
 
-plotshape(stop_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Stop", textcolor=color.black)
+plotshape(stop_sell_, color = color.blue, style = shape.labelup, location= location.belowbar, size=size.auto, text = "Stop", textcolor = color.black)
 
-plotshape(stop_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Stop", textcolor=color.black)
+plotshape(long_, color = color.green, style = shape.labeldown, location= location.abovebar, size=size.auto, text = "Buy (long)", textcolor = color.black)
 
-plotshape(stop_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Stop", textcolor=color.black)
-
-
-plotshape(long_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Long", textcolor=color.black)
-
-plotshape(long_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Long", textcolor=color.black)
-
-plotshape(long_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Long", textcolor=color.black)
-
-plotshape(long_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Long", textcolor=color.black)
+plotshape(short_, color = color.red, style = shape.labelup, location= location.belowbar, size=size.auto, text = "Sell (short)", textcolor = color.black)
 
 
-plotshape(short_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Short", textcolor=color.black)
+plotshape(buy_signal_, color = color.green, style = shape.labelup, location= location.belowbar, size=size.auto, text = "Buy", textcolor = color.black)
 
-plotshape(short_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Short", textcolor=color.black)
-
-plotshape(short_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Short", textcolor=color.black)
-
-plotshape(short_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Short", textcolor=color.black)
+plotshape(sell_signal_, color = color.red, style = shape.labeldown, location= location.abovebar, size=size.auto, text = "Sell", textcolor = color.black)
 
 
-plotshape(buy_signal_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.belowbar, size = size.auto, text = "Buy signal", textcolor=color.black)
 
-plotshape(buy_signal_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.abovebar, size = size.auto, text = "Buy signal", textcolor=color.black)
+//plotshape(profit_take_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Profit take", textcolor=color.black)
 
-plotshape(buy_signal_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.belowbar, size = size.auto, text = "Buy signal", textcolor=color.black)
+//plotshape(profit_take_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Profit take", textcolor=color.black)
 
-plotshape(buy_signal_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.abovebar, size = size.auto, text = "Buy signal", textcolor=color.black)
+//plotshape(profit_take_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Profit take", textcolor=color.black)
+
+//plotshape(profit_take_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Profit take", textcolor=color.black)
 
 
-plotshape(sell_signal_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.belowbar, size = size.auto, text = "Sell signal", textcolor=color.black)
+//plotshape(stop_and_reverse_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Stop and Reverse", textcolor=color.black)
 
-plotshape(sell_signal_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.abovebar, size = size.auto, text = "Sell signal", textcolor=color.black)
+//plotshape(stop_and_reverse_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Stop and Reverse", textcolor=color.black)
 
-plotshape(sell_signal_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.belowbar, size = size.auto, text = "Sell signal", textcolor=color.black)
+//plotshape(stop_and_reverse_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Stop and Reverse", textcolor=color.black)
 
-plotshape(sell_signal_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.abovebar, size = size.auto, text = "Sell signal", textcolor=color.black)
+//plotshape(stop_and_reverse_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Stop and Reverse", textcolor=color.black)
+
+
+//plotshape(stop_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Stop", textcolor=color.black)
+
+//plotshape(stop_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Stop", textcolor=color.black)
+
+//plotshape(stop_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Stop", textcolor=color.black)
+
+//plotshape(stop_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Stop", textcolor=color.black)
+
+
+//plotshape(long_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Long", textcolor=color.black)
+
+//plotshape(long_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Long", textcolor=color.black)
+
+//plotshape(long_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Long", textcolor=color.black)
+
+//plotshape(long_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Long", textcolor=color.black)
+
+
+//plotshape(short_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Short", textcolor=color.black)
+
+//plotshape(short_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Short", textcolor=color.black)
+
+//plotshape(short_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.abovebar, size = size.auto, text = "Short", textcolor=color.black)
+
+//plotshape(short_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.belowbar, size = size.auto, text = "Short", textcolor=color.black)
+
+
+//plotshape(buy_signal_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.belowbar, size = size.auto, text = "Buy signal", textcolor=color.black)
+
+//plotshape(buy_signal_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.abovebar, size = size.auto, text = "Buy signal", textcolor=color.black)
+
+//plotshape(buy_signal_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.belowbar, size = size.auto, text = "Buy signal", textcolor=color.black)
+
+//plotshape(buy_signal_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.abovebar, size = size.auto, text = "Buy signal", textcolor=color.black)
+
+
+//plotshape(sell_signal_ and bullishh and SAR_in_uptrend, color = color.green , style = shape.labeldown , location = location.belowbar, size = size.auto, text = "Sell signal", textcolor=color.black)
+
+//plotshape(sell_signal_ and bullishh and (not SAR_in_uptrend), color = color.green , style = shape.labelup , location = location.abovebar, size = size.auto, text = "Sell signal", textcolor=color.black)
+
+//plotshape(sell_signal_ and (not bullishh) and SAR_in_uptrend, color = color.red , style = shape.labeldown , location = location.belowbar, size = size.auto, text = "Sell signal", textcolor=color.black)
+
+//plotshape(sell_signal_ and (not bullishh) and (not SAR_in_uptrend), color = color.red , style = shape.labelup , location = location.abovebar, size = size.auto, text = "Sell signal", textcolor=color.black)
 
 
 
