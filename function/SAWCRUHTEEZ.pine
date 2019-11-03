@@ -1,9 +1,8 @@
 SAWCRUHTEEZ(SAR_reverse, SAR_reverse_up, SAR_reverse_down, SAR_up, SAR_down,
              TSR_reverse, TSR_setup_up, TSR_setup_down, TSR_reverse_up, TSR_reverse_down) =>
 
-//    var sar_stop_on = false
     var trend_has_had_tsr_trigger = false
-//    var active_trend = false
+    var recent_tsr_trigger_pre_trend = false
 
     profit_take_buy = false
     profit_take_sell = false
@@ -21,122 +20,111 @@ SAWCRUHTEEZ(SAR_reverse, SAR_reverse_up, SAR_reverse_down, SAR_up, SAR_down,
 
     RSI = rsi(close, 14)
 
-//    bullish = bool(na)
-
     if (SAR_reverse_up and TSR_reverse_up)
         signal := "SAR"
-//        bullish := true
 
         trend_has_had_tsr_trigger := true
-//        sar_stop_on := true
-//        active_trend := true
         stop_and_reverse_buy := true
     else
         if (SAR_reverse_down and TSR_reverse_down)
             signal := "SAR"
-//            bullish := false
 
             trend_has_had_tsr_trigger := true
-//            sar_stop_on := true
-//            active_trend := true
             stop_and_reverse_sell := true
         else
             if (SAR_reverse_up and not TSR_reverse_up)
-                signal := "Stop"
-//                bullish := true
+                if (recent_tsr_trigger_pre_trend)
+                    signal := "SAR"
 
-                trend_has_had_tsr_trigger := false
-//                sar_stop_on := false
-//                active_trend := true
-                stop_buy := true
-            else
-                if (SAR_reverse_down and not TSR_reverse_down)
+                    trend_has_had_tsr_trigger := true
+                    stop_and_reverse_buy := true
+                else
                     signal := "Stop"
-//                    bullish = false
 
                     trend_has_had_tsr_trigger := false
-//                    sar_stop_on := false
-//                    active_trend := true
-                    stop_sell := true
+                    stop_buy := true
+            else
+                if (SAR_reverse_down and not TSR_reverse_down)
+                    if (recent_tsr_trigger_pre_trend)
+                        signal := "SAR"
+
+                        trend_has_had_tsr_trigger := true
+                        stop_and_reverse_sell := true
+                    else
+                        signal := "Stop"
+
+                        trend_has_had_tsr_trigger := false
+                        stop_sell := true
 
 
                 else
 
-//                    if active_trend
-
                     if (not trend_has_had_tsr_trigger)
                         if (TSR_reverse_up and SAR_up)
                             signal := "Long"
-//                            bullish := true
 
-
-//                            sar_stop_on := true
-//                            active_trend := true
                             long := true
                             trend_has_had_tsr_trigger := true
                         else
                             if (TSR_reverse_down and SAR_down)
                                 signal := "Short"
-//                                bullish := false
 
-//                                sar_stop_on := true
-//                                active_trend := true
                                 short := true
                                 trend_has_had_tsr_trigger := true
 
 
-//                    else
                     if (not long and not short)
-                        if (TSR_setup_down and SAR_up and (RSI <= 75))
+                        if (TSR_setup_down and SAR_up)
+//                         and (RSI <= 75))
                             signal := "Buy"
-        //                            bullish := true
 
-        //                            sar_stop_on := true
-        //                            active_trend := true
                             buy_signal := true
                         else
-                            if (TSR_reverse_down and SAR_up and (RSI <= 75))
+                            if (TSR_reverse_down and SAR_up)
+//                             and (RSI <= 75))
                                 signal := "Buy"
-        //                                bullish := true
 
-        //                                sar_stop_on := true
-        //                                active_trend := true
                                 buy_signal := true
                             else
-                                if (TSR_reverse_down and SAR_up and (RSI > 75))
+                                if (TSR_reverse_down and SAR_up)
+//                                 and (RSI > 75))
                                     signal := "Sell-FPT"
-        //                                    bullish := false
 
-        //                                    sar_stop_on := false
-        //                                    active_trend := false
                                     profit_take_sell := true
 
 
 
                                 else
-                                    if (TSR_setup_up and SAR_down and (RSI >= 25))
+                                    if (TSR_setup_up and SAR_down)
+//                                     and (RSI >= 25))
                                         signal := "Sell"
-        //                                        bullish := false
 
-        //                                        sar_stop_on := true
-        //                                        active_trend := true
                                         sell_signal := true
                                     else
-                                        if (TSR_reverse_up and SAR_down and (RSI >= 25))
+                                        if (TSR_reverse_up and SAR_down)
+//                                         and (RSI >= 25))
                                             signal := "Sell"
-        //                                            bullish := false
 
-        //                                            sar_stop_on := true
-        //                                            active_trend := true
                                             sell_signal := true
                                         else
-                                            if (TSR_reverse_up and SAR_down and (RSI < 25))
+                                            if (TSR_reverse_up and SAR_down)
+//                                             and (RSI < 25))
                                                 signal := "Buy-FPT"
-        //                                                bullish := true
 
-        //                                                sar_stop_on := false
-        //                                                active_trend := false
                                                 profit_take_buy := true
+    if (SAR_reverse_up or SAR_reverse_down)
+        recent_tsr_trigger_pre_trend := false
+
+    if (TSR_reverse_up and SAR_down)
+        recent_tsr_trigger_pre_trend := true
+    if (TSR_reverse_down and SAR_down)
+        recent_tsr_trigger_pre_trend := false
+    if (TSR_reverse_down and SAR_up)
+        recent_tsr_trigger_pre_trend := true
+    if (TSR_reverse_up and SAR_up)
+        recent_tsr_trigger_pre_trend := false
+
+
 
 
 
