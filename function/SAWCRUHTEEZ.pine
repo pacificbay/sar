@@ -1,5 +1,5 @@
 SAWCRUHTEEZ(SAR_reverse, SAR_reverse_up, SAR_reverse_down, SAR_up, SAR_down,
-             TSR_reverse, TSR_setup_up, TSR_setup_down, TSR_reverse_up, TSR_reverse_down) =>
+             TSR_reverse, TSR_setup_up, TSR_setup_down, TSR_reverse_up, TSR_reverse_down, TSR_up) =>
 
     var trend_has_had_tsr_trigger = false
     var recent_tsr_trigger_pre_trend = false
@@ -39,10 +39,15 @@ SAWCRUHTEEZ(SAR_reverse, SAR_reverse_up, SAR_reverse_down, SAR_up, SAR_down,
                     trend_has_had_tsr_trigger := true
                     stop_and_reverse_buy := true
                 else
-                    signal := "Stop"
+                    if TSR_up
+                        signal := "Buy"
 
-                    trend_has_had_tsr_trigger := false
-                    stop_buy := true
+                        buy_signal := true
+                    else
+                        signal := "Stop"
+
+                        trend_has_had_tsr_trigger := false
+                        stop_buy := true
             else
                 if (SAR_reverse_down and not TSR_reverse_down)
                     if (recent_tsr_trigger_pre_trend)
@@ -51,10 +56,15 @@ SAWCRUHTEEZ(SAR_reverse, SAR_reverse_up, SAR_reverse_down, SAR_up, SAR_down,
                         trend_has_had_tsr_trigger := true
                         stop_and_reverse_sell := true
                     else
-                        signal := "Stop"
+                        if (not TSR_up)
+                            signal := "Sell"
 
-                        trend_has_had_tsr_trigger := false
-                        stop_sell := true
+                            sell_signal := true
+                        else
+                            signal := "Stop"
+
+                            trend_has_had_tsr_trigger := false
+                            stop_sell := true
 
 
                 else
