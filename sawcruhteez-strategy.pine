@@ -1,0 +1,99 @@
+//@version=4
+strategy("Sawcruhteez SAR v1.2.5 - Strategy v1.2.6", shorttitle="Sawcruhteez SAR Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, initial_capital=10000)
+
+import header
+
+
+// The following global variable provide event signalling, after a fashion,
+// from the results of the LUCID_SAR and TSR functions to the SAWCRUHTEEZ indicator function
+TSR_reversal_triggered = false
+TSR_setup_towards_uptrend = false
+TSR_setup_towards_downtrend = false
+TSR_reversal_to_uptrend = false
+TSR_reversal_to_downtrend = false
+TSR_in_up_trend = false
+
+SAR_reversal_triggered = false
+SAR_reversal_to_uptrend = false
+SAR_reversal_to_downtrend = false
+SAR_in_uptrend = false
+SAR_in_downtrend = false
+
+
+AF_initial = input(0.02)
+AF_increment = input(0.02)
+AF_maximum = input(0.2)
+
+import LUCID_SAR
+
+[L_SAR, reversal, uptrend] =  LUCID_SAR(AF_initial, AF_increment, AF_maximum)
+
+SAR_reversal_triggered := (reversal != 0)
+SAR_reversal_to_uptrend := (reversal == 1)
+SAR_reversal_to_downtrend := (reversal == 2)
+SAR_in_uptrend := uptrend
+SAR_in_downtrend := not uptrend
+
+import TSR
+
+// [trigger_candle, trigger, since_setup, setup_candle, setup, since_extreme, extreme_candle, uptrend]
+
+[TC, T, SS, SC, S, SE, EC, up] = TSR()
+
+TSR_reversal_triggered := TC
+TSR_setup_towards_uptrend := SC and (not up)
+TSR_setup_towards_downtrend := SC and up
+TSR_reversal_to_uptrend := TC and up
+TSR_reversal_to_downtrend := TC and (not up)
+TSR_in_up_trend := up
+
+
+import SAWCRUHTEEZ
+
+
+
+[signall, profit_take_buy_, profit_take_sell_, stop_and_reverse_buy_, stop_and_reverse_sell_, stop_buy_, stop_sell_, long_, short_, buy_signal_, sell_signal_]= SAWCRUHTEEZ(SAR_reversal_triggered, SAR_reversal_to_uptrend, SAR_reversal_to_downtrend, SAR_in_uptrend, SAR_in_downtrend,
+                     TSR_reversal_triggered, TSR_setup_towards_uptrend, TSR_setup_towards_downtrend, TSR_reversal_to_uptrend, TSR_reversal_to_downtrend, TSR_in_up_trend)
+
+
+
+plotshape(SC and not up, color = color.yellow, style = shape.triangleup, location = location.belowbar, size = size.auto, transp = 0, title = "Setup to Buy")
+
+plotshape(TC and up, color = color.green, style = shape.triangleup, location = location.belowbar, size = size.auto, title = "Trigger to Buy")
+
+plotshape(SC and up, color = color.yellow, style = shape.triangledown, location = location.abovebar, size = size.auto, transp = 0, title = "Setup to Sell")
+
+plotshape(TC and not up, color = color.red, style = shape.triangledown, location = location.abovebar, size = size.auto, title = "Trigger to Sell")
+
+plot(L_SAR, color = color.blue, style = plot.style_cross, linewidth = 2)
+
+
+plotshape(profit_take_buy_, color = color.green, style = shape.labelup, location=location.belowbar, size=size.auto, text = "Buy (FPT)", textcolor= color.black)
+
+plotshape(profit_take_sell_, color = color.red, style = shape.labeldown, location= location.abovebar, size=size.auto, text = "Sell (FPT)", textcolor = color.black)
+
+plotshape(stop_and_reverse_buy_, color = color.purple, style = shape.labeldown, location=location.abovebar, size = size.auto, text = "SAR", textcolor = color.black)
+
+plotshape(stop_and_reverse_sell_, color = color.purple, style = shape.labelup, location= location.belowbar, size=size.auto, text = "SAR", textcolor = color.black)
+
+
+
+
+plotshape(stop_buy_, color = color.blue, style = shape.labeldown, location=location.abovebar, size = size.auto, text = "Stop", textcolor = color.black)
+
+plotshape(stop_sell_, color = color.blue, style = shape.labelup, location= location.belowbar, size=size.auto, text = "Stop", textcolor = color.black)
+
+plotshape(long_, color = color.green, style = shape.labeldown, location= location.abovebar, size=size.auto, text = "Buy (long)", textcolor = color.black)
+
+plotshape(short_, color = color.red, style = shape.labelup, location= location.belowbar, size=size.auto, text = "Sell (short)", textcolor = color.black)
+
+
+plotshape(buy_signal_, color = color.green, style = shape.labelup, location= location.belowbar, size=size.auto, text = "Buy", textcolor = color.black)
+
+plotshape(sell_signal_, color = color.red, style = shape.labeldown, location= location.abovebar, size=size.auto, text = "Sell", textcolor = color.black)
+
+
+strategy.entry("long", strategy.long, 1, when = (((profit_take_buy_ or long_ or buy_signal_) and strategy.position_size = 0) or (stop_and_reverse_buy_ and strategy.position_size = -1))
+strategy.entry("short", strategy.short, 1, when = (((profit_take_sell_ or sell_ or sell_signal_) and strategy.position_size = 0) or (stop_and_reverse_sell_ and strategy.position_size = 1))
+strategy.exit("stop_long", "long", when = (stop_and_reverse_sell_ or stop_sell_))
+strategy.exit("stop_short", "short", when = (stop_and_reverse_buy_ or stop_buy_))
