@@ -1,5 +1,5 @@
 //@version=4
-strategy("Sawcruhteez SAR v1.2.5 - Strategy v1.2.6", shorttitle="Sawcruhteez SAR Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, initial_capital=10000)
+strategy("Sawcruhteez SAR v1.2.5 - Strategy v1.2.7", shorttitle="Sawcruhteez SAR Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, initial_capital=10000)
 
 import header
 
@@ -92,8 +92,7 @@ plotshape(buy_signal_, color = color.green, style = shape.labelup, location= loc
 
 plotshape(sell_signal_, color = color.red, style = shape.labeldown, location= location.abovebar, size=size.auto, text = "Sell", textcolor = color.black)
 
-
-strategy.entry("long", strategy.long, 1, when = (((profit_take_buy_ or long_ or buy_signal_) and strategy.position_size = 0) or (stop_and_reverse_buy_ and strategy.position_size = -1))
-strategy.entry("short", strategy.short, 1, when = (((profit_take_sell_ or sell_ or sell_signal_) and strategy.position_size = 0) or (stop_and_reverse_sell_ and strategy.position_size = 1))
+strategy.entry("long", strategy.long, 1, when = (((profit_take_buy_ or long_ or buy_signal_) and strategy.position_size == 0) or (stop_and_reverse_buy_ and strategy.position_size < 0)))
+strategy.entry("short", strategy.short, 1, when = (((profit_take_sell_ or short_ or sell_signal_) and strategy.position_size == 0) or (stop_and_reverse_sell_ and strategy.position_size > 0)))
 strategy.exit("stop_long", "long", when = (stop_and_reverse_sell_ or stop_sell_))
 strategy.exit("stop_short", "short", when = (stop_and_reverse_buy_ or stop_buy_))
